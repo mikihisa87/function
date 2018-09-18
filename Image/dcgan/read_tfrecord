@@ -1,0 +1,16 @@
+import tensorflow as tf
+
+count = 0
+for record in tf.python_io.tf_record_iterator('./data.tfrecords'):
+    example = tf.train.Example()
+    example.ParseFromString(record)
+
+    label = example.features.feature["label"].int64_list.value[0]
+    image = example.features.feature["image_raw"].bytes_list.value[0]
+    print(label, image)
+
+    filename = '{:04d}-{:03d}.jpg'.format(count, label)
+    with open(filename, 'wb') as f:
+        f.write(image)
+
+    count += 1
